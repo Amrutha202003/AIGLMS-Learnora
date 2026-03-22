@@ -7,7 +7,10 @@ from datetime import timedelta
 from games.models import GameSession, StudentResponse, Score
 from questions.models import Question
 from academics.models import Topic, Concept
-import google.generativeai as genai
+try:
+    import google.generativeai as genai
+except ImportError:
+    import google.genai as genai
 class AdaptiveLearningAI:
     """
     AI-powered adaptive learning system with detailed feedback

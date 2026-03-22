@@ -1,4 +1,7 @@
-import google.generativeai as genai
+try:
+    import google.generativeai as genai
+except ImportError:
+    import google.genai as genai
 import os
 import json
 
