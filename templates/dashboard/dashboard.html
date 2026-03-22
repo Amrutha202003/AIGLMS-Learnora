@@ -1,0 +1,376 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Learnora</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dashboard-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .welcome-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .welcome-card h1 { color: #667eea; margin-bottom: 0.5rem; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform .3s;
+        }
+
+        .stat-card:hover { transform: translateY(-5px); }
+
+        .stat-icon  { font-size: 3rem; margin-bottom: 1rem; }
+        .stat-value { font-size: 2.5rem; font-weight: bold; color: #667eea; }
+        .stat-label { color: #666; }
+
+        .games-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .game-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all .3s;
+        }
+
+        .game-card:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102,126,234,.3);
+        }
+
+        .game-icon { font-size: 4rem; margin-bottom: 1rem; }
+
+        /* ── Play button — styled as a full link ── */
+        .play-btn {
+            display: inline-block;
+            background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .play-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102,126,234,0.5);
+            color: white;
+        }
+
+        /* ── Session warning banner ── */
+        #session-warning {
+            display: none;
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 12px 20px;
+            margin-bottom: 1rem;
+            color: #856404;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover { background: #667eea; color: white; }
+
+        a { text-decoration: none; }
+    </style>
+</head>
+
+<body>
+
+<button class="logout-btn" onclick="logout()">
+    <i class="bi bi-box-arrow-right"></i> Logout
+</button>
+
+<div class="dashboard-container">
+
+    <div class="welcome-card">
+        <h1>Welcome back, <span id="studentName">Student</span>! 🎓</h1>
+        <p class="text-muted">Ready to continue your learning adventure?</p>
+    </div>
+
+    <!-- Warning shown if no session is active when Play is clicked -->
+    <div id="session-warning">
+        ⚠️ No active game session found.
+        <a href="/select-topic/" style="color:#856404; font-weight:600;">
+            Click here to select a topic first
+        </a>
+        before playing.
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-value" id="totalScore" style="font-size: 2rem; overflow: hidden; text-overflow: ellipsis;">—</div>
+            <div class="stat-label">High Score</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🎮</div>
+            <div class="stat-value" id="gamesPlayed">—</div>
+            <div class="stat-label">Games Completed</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-value" id="highestLevel">1</div>
+            <div class="stat-label">Highest Level</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-value" id="streak">0</div>
+            <div class="stat-label">Day Streak</div>
+        </div>
+
+    </div>
+
+    <div class="games-section">
+
+        <h2 class="mb-2">🎯 Available Games</h2>
+
+        <!-- Show which topic is selected if session is active -->
+        <div id="activeTopicBar" style="
+            display:none; margin-bottom:1rem;
+            padding:10px 16px; background:#f0f4ff;
+            border-radius:10px; border:1px solid #c7d2fe;
+            font-size:0.9rem; color:#4338ca;">
+            📚 Active topic: <strong id="activeTopicName"></strong>
+            &nbsp;|&nbsp;
+            <a href="/select-topic/" style="color:#6366f1;">Change topic</a>
+        </div>
+
+        <div class="games-grid">
+
+            <!-- ═══════════════════════════════════════════════════ -->
+            <!-- ZOMBIE GAME — FIX: now links to /play-game/        -->
+            <!-- instead of localhost:52401 (Unity's dev server)    -->
+            <!-- ═══════════════════════════════════════════════════ -->
+            <div class="game-card">
+                <div class="game-icon">🧟</div>
+                <h3>Zombie Quiz Escape</h3>
+                <p class="text-muted">
+                    Survive zombie waves by answering questions correctly!
+                </p>
+                <!-- FIX: changed from href="http://localhost:52401/" -->
+                <!-- to onclick that checks session first            -->
+                <a href="#" class="play-btn" id="zombiePlayBtn"
+                   onclick="playGame(event)">
+                    ▶ Play Now
+                </a>
+            </div>
+
+            <!-- Coming Soon Game -->
+            <div class="game-card">
+                <div class="game-icon">💎</div>
+                <h3>Match-3 Brain Blast</h3>
+                <p class="text-muted">Match quiz answers to clear the board.</p>
+                <button class="play-btn"
+                        style="background:#ccc; cursor:not-allowed;"
+                        disabled>
+                    Coming Soon
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+// ── On page load ──────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function () {
+    var token = localStorage.getItem('access_token');
+
+    // Auth guard
+    if (!token) {
+        window.location.href = '/login/';
+        return;
+    }
+
+    // Show student name
+    var username = localStorage.getItem('username') ||
+        (JSON.parse(localStorage.getItem('user_data') || '{}')).username ||
+        'Student';
+    document.getElementById('studentName').textContent = username;
+
+    // Show active topic if a session is ready
+    var topicName = localStorage.getItem('selected_topic_name');
+    if (topicName) {
+        document.getElementById('activeTopicName').textContent = topicName;
+        document.getElementById('activeTopicBar').style.display = 'block';
+    }
+
+    // Load progress stats
+    loadProgress(token);
+});
+
+// ── Play button click ─────────────────────────────────────────────
+// Checks session_id exists before going to /play-game/
+// If no session → warns the user to select a topic first
+function playGame(event) {
+    event.preventDefault();
+
+    var sessionId = localStorage.getItem('session_id');
+    var topicId   = localStorage.getItem('selected_topic_id');
+
+    if (!sessionId || !topicId) {
+        // No session active — show warning and don't navigate
+        document.getElementById('session-warning').style.display = 'block';
+        // Scroll to warning
+        document.getElementById('session-warning').scrollIntoView(
+            { behavior: 'smooth' });
+        return;
+    }
+
+    // Session exists — go to game page
+    window.location.href = '/play-game/';
+}
+
+// ── Load stats from API ───────────────────────────────────────────
+// ── Corrected Load stats from API ───────────────────────────────────────────
+async function loadProgress(token) {
+    try {
+        // Refresh token if needed
+        var refreshed = false;
+        var scoresRes = await fetch('/api/game/scores/', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (scoresRes.status === 401) {
+            var refresh = localStorage.getItem('refresh_token');
+            var refreshRes = await fetch('/api/auth/token/refresh/', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ refresh: refresh })
+            });
+            var refreshData = await refreshRes.json();
+            if (refreshData.access) {
+                localStorage.setItem('access_token', refreshData.access);
+                token = refreshData.access;
+                scoresRes = await fetch('/api/game/scores/', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+            }
+        }
+
+        if (scoresRes.ok) {
+            var data      = await scoresRes.json();
+            var scoreList = Array.isArray(data) ?
+                data : (data.results || []);
+
+            if (scoreList.length > 0) {
+                // ✅ Show HIGHEST score — not sum!
+                var highestScore = Math.max(
+                    ...scoreList.map(function(s) {
+                        return Number(s.total_score) || 0;
+                    })
+                );
+
+                document.getElementById('totalScore')
+                    .textContent = highestScore.toLocaleString();
+                document.getElementById('gamesPlayed')
+                    .textContent = scoreList.length;
+            } else {
+                document.getElementById('totalScore')
+                    .textContent = '0';
+                document.getElementById('gamesPlayed')
+                    .textContent = '0';
+            }
+        }
+
+        // Load progress
+        var progressRes = await fetch('/api/game/progress/', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (progressRes.ok) {
+            var progress = await progressRes.json();
+            if (progress.completed_sessions !== undefined)
+                document.getElementById('gamesPlayed')
+                    .textContent = progress.completed_sessions;
+        }
+
+    } catch(err) {
+        console.error('Progress error:', err);
+        document.getElementById('totalScore').textContent  = '0';
+        document.getElementById('gamesPlayed').textContent = '0';
+    }
+}
+
+
+// ── Logout ────────────────────────────────────────────────────────
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.clear();
+        window.location.href = '/login/';
+    }
+}
+
+</script>
+
+</body>
+</html>

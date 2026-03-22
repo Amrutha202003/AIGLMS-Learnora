@@ -1,0 +1,76 @@
+{% extends "layouts/dashboard_base.html" %}
+{% block title %}Profile | Lenora{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+
+    <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2 class="hero-title" style="margin: 0;">Student Profile</h2>
+        <button class="secondary-btn" onclick="toggleEdit()" id="editBtn">Edit Profile</button>
+    </div>
+
+    <div id="viewMode">
+        <div class="profile-card">
+            <div class="profile-avatar">
+                {{ request.user.username|first|upper }}
+            </div>
+
+            <div class="profile-info">
+                <p style="font-size: 1.2rem;"><strong style="color: var(--soft-glow);">Name:</strong> {{ request.user.username }}</p>
+                <p><strong style="color: var(--soft-glow);">Email:</strong> {{ request.user.email }}</p>
+                <p><strong style="color: var(--soft-glow);">Board:</strong> {{ profile.board|default:"Not Set" }}</p>
+                <p><strong style="color: var(--soft-glow);">Grade:</strong> {{ profile.grade|default:"Not Set" }}</p>
+                <p><strong style="color: var(--soft-glow);">University:</strong> {{ profile.university|default:"Not Set" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="editMode" style="display:none;">
+        <div class="stat-card">
+            <form method="POST" class="profile-edit-section">
+                {% csrf_token %}
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>Board</label>
+                        {{ form.board }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Grade</label>
+                        {{ form.grade }}
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>University</label>
+                        {{ form.university }}
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; display: flex; gap: 15px;">
+                    <button type="submit" class="primary-btn">Save Changes</button>
+                    <button type="button" class="secondary-btn" onclick="toggleEdit()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function toggleEdit() {
+    const view = document.getElementById("viewMode");
+    const edit = document.getElementById("editMode");
+    const btn = document.getElementById("editBtn");
+
+    if (edit.style.display === "none") {
+        edit.style.display = "block";
+        view.style.display = "none";
+        btn.style.display = "none";
+    } else {
+        edit.style.display = "none";
+        view.style.display = "block";
+        btn.style.display = "block";
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "layouts/dashboard_base.html" %}
+{% block content %}
+
+<h2>{{ subject.name }}</h2>
+
+<div class="subject-card">
+    <p><strong>XP:</strong> {{ xp }}</p>
+    <p><strong>Progress:</strong> {{ progress }}%</p>
+</div>
+
+{% endblock %}

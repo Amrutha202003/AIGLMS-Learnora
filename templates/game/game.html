@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zombie Quiz Escape</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            background: #000;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-wrap {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #unity-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        #loading-cover {
+            position: absolute;
+            inset: 0;
+            background: #0a0a1a;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #a5b4fc;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        #loading-cover h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #c4b5fd;
+        }
+
+        #bar-wrap {
+            width: 300px;
+            height: 8px;
+            background: #1e1b4b;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        #bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        #pct {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #818cf8;
+        }
+
+        #back-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 20;
+            padding: 8px 18px;
+            background: rgba(99,102,241,0.3);
+            border: 1px solid #6366f1;
+            border-radius: 8px;
+            color: #a5b4fc;
+            text-decoration: none;
+            font-size: 13px;
+            font-family: 'Segoe UI', sans-serif;
+            transition: background 0.2s;
+        }
+
+        #back-btn:hover {
+            background: rgba(99,102,241,0.55);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-wrap">
+
+    <a href="/dashboard/" id="back-btn">&#8592; Back to Dashboard</a>
+
+    <div id="loading-cover">
+        <h2>&#129503; Loading Zombie Quiz Escape...</h2>
+        <div id="bar-wrap">
+            <div id="bar"></div>
+        </div>
+        <div id="pct">0%</div>
+    </div>
+
+    <canvas id="unity-canvas"></canvas>
+
+</div>
+
+<script src="{% static 'unity/Zombie_Quiz_escape_Webgl/Build/Zombie_Quiz_escape_Webgl.loader.js' %}"></script>
+
+<script>
+    // Auth check
+    var accessToken  = localStorage.getItem('access_token')        || '';
+    var refreshToken = localStorage.getItem('refresh_token')       || '';
+    var sessionId    = localStorage.getItem('session_id')          || '';
+    var topicId      = localStorage.getItem('selected_topic_id')   || '';
+    var topicName    = localStorage.getItem('selected_topic_name') || '';
+
+    if (!accessToken) {
+        window.location.href = '/login/';
+    }
+
+    console.log('Starting game | Topic:', topicName,
+        '| Session:', sessionId,
+        '| Token OK:', !!accessToken);
+
+    // Load Unity
+    createUnityInstance(
+        document.getElementById('unity-canvas'),
+        {
+            dataUrl:      "{% static 'unity/Zombie_Quiz_escape_Webgl/Build/Zombie_Quiz_escape_Webgl.data' %}",
+            frameworkUrl: "{% static 'unity/Zombie_Quiz_escape_Webgl/Build/Zombie_Quiz_escape_Webgl.framework.js' %}",
+            codeUrl:      "{% static 'unity/Zombie_Quiz_escape_Webgl/Build/Zombie_Quiz_escape_Webgl.wasm' %}",
+            streamingAssetsUrl: "{% static 'unity/Zombie_Quiz_escape_Webgl/StreamingAssets' %}",
+            companyName:   "Learnora",
+            productName:   "Zombie Quiz Escape",
+            productVersion:"1.0",
+        },
+        function(progress) {
+            var pct = Math.round(progress * 100);
+            document.getElementById('bar').style.width = pct + '%';
+            document.getElementById('pct').textContent = pct + '%';
+        }
+    ).then(function(unityInstance) {
+
+        // Hide loading screen
+        document.getElementById('loading-cover').style.display = 'none';
+
+        // Send auth data to Unity
+        try {
+            unityInstance.SendMessage(
+                'APIManager', 'SetAuthToken', accessToken);
+            unityInstance.SendMessage(
+                'APIManager', 'SetRefreshToken', refreshToken);
+            unityInstance.SendMessage(
+                'APIManager', 'SetSessionId', sessionId);
+            unityInstance.SendMessage(
+                'APIManager', 'SetTopicId', topicId);
+
+            console.log('Unity loaded! Auth data sent.');
+        } catch(e) {
+            console.warn('SendMessage error:', e);
+        }
+
+    }).catch(function(err) {
+        console.error('Unity failed to load:', err);
+        document.getElementById('loading-cover').innerHTML =
+            '<h2 style="color:#fca5a5">Failed to load game</h2>' +
+            '<p style="color:#888; max-width:400px; text-align:center; margin-top:10px;">' +
+            err + '</p>' +
+            '<a href="/dashboard/" style="color:#a5b4fc; margin-top:20px; display:block; text-align:center;">' +
+            '&#8592; Back to Dashboard</a>';
+    });
+
+    // Called by Unity when game ends
+    function onGameComplete(score) {
+        console.log('Game complete! Score:', score);
+        localStorage.setItem('last_score', score);
+        setTimeout(function() {
+            window.location.href = '/dashboard/';
+        }, 3000);
+    }
+
+    // Called by Unity if token expires
+    function redirectToLogin() {
+        localStorage.clear();
+        window.location.href = '/login/';
+    }
+</script>
+
+</body>
+</html>

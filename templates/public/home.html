@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - Learnora{% endblock %}
+
+{% block content %}
+<main>
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+        <div class="hero-overlay"></div>
+        
+        <div class="hero-container">
+            <div class="hero-details">
+                <h2 class="title">Welcome to Learnora</h2>
+                <h3 class="subtitle">
+                    An Adaptive Game-Based Learning Management System
+                </h3>
+                <p class="description">
+                    AI Powered • Class & Board Based • Performance Driven
+                </p>
+
+                <div class="button">
+                    <a href="/register/" class="register">Register Now</a>
+                    <a href="/login/" class="login">Login</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="section-content">
+            <div class="about-image-wrapper">
+                <img src="{% static 'images/aboutPG.jpg' %}" alt="About Learnora" class="about-image" 
+                     onerror="this.src='https://via.placeholder.com/600x400/667eea/ffffff?text=About+Learnora'">
+            </div>
+            <div class="about-details">
+                <h2 class="section-title">About Us</h2>
+                <p class="text">
+                    Learnora is an intelligent educational platform designed to enhance student 
+                    engagement through adaptive learning and game-based interaction. The system 
+                    integrates Artificial Intelligence to generate dynamic questions based on 
+                    the student's class and board curriculum, ensuring personalized learning 
+                    experiences.
+                </p>
+                <p class="text">
+                    By combining structured academic content with interactive gaming elements, 
+                    Learnora bridges the gap between traditional education and modern technology. 
+                    The platform tracks student performance, analyzes strengths and weaknesses, 
+                    and continuously adapts learning difficulty levels to maximize understanding 
+                    and retention.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vision Section -->
+    <section class="vision-section" id="vision">
+        <div class="vision-container">
+            <h1>Our Vision</h1>
+
+            <p>
+                At Learnora, our vision is to redefine the future of education 
+                by integrating Artificial Intelligence with immersive 
+                game-based learning environments.
+            </p>
+
+            <p>
+                We envision a system where learning is no longer passive 
+                but adaptive, intelligent, and engaging. By analyzing 
+                student performance in real time, the platform continuously 
+                evolves to meet individual learning needs.
+            </p>
+
+            <p>
+                Our goal is to eliminate one-size-fits-all education models 
+                and replace them with personalized learning pathways that 
+                enhance comprehension, retention, and motivation.
+            </p>
+
+            <p>
+                Through AI-driven question generation and interactive 
+                gaming experiences powered by modern technologies, 
+                Learnora aspires to create a competitive yet supportive 
+                academic ecosystem for students across various boards 
+                and class levels.
+            </p>
+
+            <p class="highlight">
+                We aim to build a smart education system where 
+                intelligence meets interaction.
+            </p>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="testimonials-section" id="gallery">
+        <h2 class="section-title">Game Gallery</h2>
+        <div class="section-content">
+            <div class="slider-container swiper">
+                <div class="slider-wrapper">
+                    <ul class="testimonials-list swiper-wrapper">
+                        <li class="testimonials swiper-slide">
+                            <img src="{% static 'images/gallery1.jpg' %}" alt="Zombie Game" class="user-image"
+                                 onerror="this.src='https://via.placeholder.com/400x300/667eea/ffffff?text=Zombie+Quiz+Escape'">
+                            <h3 class="name">🧟 Zombie Quiz Escape</h3>
+                        </li>
+                        <li class="testimonials swiper-slide">
+                            <img src="{% static 'images/gallery2.jpg' %}" alt="Match-3 Game" class="user-image"
+                                 onerror="this.src='https://via.placeholder.com/400x300/764ba2/ffffff?text=Match-3+Challenge'">
+                            <h3 class="name">💎 Match-3 Brain Blast</h3>
+                        </li>
+                        <li class="testimonials swiper-slide">
+                            <img src="{% static 'images/gallery3.jpg' %}" alt="Puzzle Game" class="user-image"
+                                 onerror="this.src='https://via.placeholder.com/400x300/667eea/ffffff?text=Mystery+Mansion'">
+                            <h3 class="name">🏰 Mystery Mansion</h3>
+                        </li>
+                        <li class="testimonials swiper-slide">
+                            <img src="{% static 'images/gallery4.jpg' %}" alt="Space Game" class="user-image"
+                                 onerror="this.src='https://via.placeholder.com/400x300/764ba2/ffffff?text=Space+Impostor'">
+                            <h3 class="name">🚀 Space Impostor Quiz</h3>
+                        </li>
+                    </ul>
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

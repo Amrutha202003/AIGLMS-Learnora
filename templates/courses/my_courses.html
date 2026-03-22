@@ -1,0 +1,19 @@
+{% extends "layouts/dashboard_base.html" %}
+{% block content %}
+
+<h2>My Subjects</h2>
+
+<div class="subjects-grid">
+    {% if enrolled_subjects %}
+        {% for enrollment in enrolled_subjects %}
+            <a href="{% url 'subject_detail' enrollment.subject.id %}" 
+               class="subject-button">
+                {{ enrollment.subject.name }}
+            </a>
+        {% endfor %}
+    {% else %}
+        <p>No subjects enrolled yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

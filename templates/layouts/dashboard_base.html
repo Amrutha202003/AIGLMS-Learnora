@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Lenora Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+
+<header class="dashboard-navbar">
+    <div class="navbar-left">
+        <span class="menu-toggle" onclick="toggleSidebar()">☰</span>
+        <a href="{% url 'dashboard' %}" class="brand">Lenora</a>
+    </div>
+
+    <div class="navbar-right">
+        <div class="rank-badge">🔥 Bronze</div>
+        <a href="{% url 'student_profile' %}" class="avatar-wrapper">
+            <div class="avatar-circle">
+                {{ request.user.username|first|upper }}
+            </div>
+        </a>
+    </div>
+</header>
+
+<div id="sidebar-overlay" class="overlay" onclick="toggleSidebar()"></div>
+
+<div class="dashboard-wrapper">
+    <aside class="sidebar" id="sidebar">
+        <ul class="nav-links">
+            <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'student_profile' %}">Profile</a></li>
+            <li><a href="{% url 'my_courses' %}">My Courses</a></li>
+            <li><a href="{% url 'leaderboard' %}">Leaderboard</a></li>
+            
+            <li><a href="{% url 'logout' %}" class="logout">Logout</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+</div>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebar-overlay");
+    sidebar.classList.toggle("active");
+    overlay.classList.toggle("active");
+}
+</script>
+</body>
+</html>

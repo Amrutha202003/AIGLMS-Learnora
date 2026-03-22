@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="login-section">
+
+<div class="login-container">
+
+<h2>Student Login</h2>
+
+<input type="text" id="username" placeholder="Enter Username" required>
+<input type="password" id="password" placeholder="Enter Password" required>
+
+<button type="submit">Login</button>
+
+<div class="row">
+    <input type="text" placeholder="First Name" required>
+    <input type="text" placeholder="Last Name" required>
+</div>
+
+<!-- Grade -->
+<select id="grade" required>
+    <option value="">Select STD / Grade</option>
+    <option>1st</option>
+    <option>2nd</option>
+    <option>3rd</option>
+    <option>4th</option>
+    <option>5th</option>
+    <option>6th</option>
+    <option>7th</option>
+    <option>8th</option>
+    <option>9th</option>
+    <option>10th</option>
+    <option>11th</option>
+    <option>12th</option>
+    <option value="UG">Undergraduate</option>
+    <option value="PG">Postgraduate</option>
+</select>
+
+<!-- Degree -->
+<div id="degreeField" class="hidden">
+    <input type="text" placeholder="Enter Your Degree">
+    <input type="text" placeholder="Enter Your University">
+</div>
+
+<!-- Board -->
+<select required>
+    <option value="">Select Board</option>
+    <option>ICSE</option>
+    <option>CBSE</option>
+    <option>State Board</option>
+</select>
+
+<!-- Contact Method -->
+<div class="contact-method">
+    <label><input type="radio" name="contact" value="phone" checked> Phone</label>
+    <label><input type="radio" name="contact" value="email"> Email</label>
+</div>
+
+<!-- Phone -->
+<div id="phoneField">
+    <input type="text" id="phoneInput" placeholder="+91XXXXXXXXXX">
+</div>
+
+<!-- Email -->
+<div id="emailField" class="hidden">
+    <input type="email" placeholder="Enter Email">
+</div>
+
+<button type="button" id="verifyBtn">Verify</button>
+
+<!-- OTP -->
+<div id="otpSection" class="hidden">
+    <input type="text" placeholder="Enter OTP">
+    <button type="submit">Login</button>
+</div>
+
+</form>
+
+</div>
+</section>
+
+{% endblock %}

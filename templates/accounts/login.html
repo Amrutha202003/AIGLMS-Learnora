@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Login - Learnora{% endblock %}
+{% block content %}
+<style>
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh; display: flex; align-items: center;
+    justify-content: center; font-family: 'Segoe UI', sans-serif; padding: 2rem;
+  }
+  .login-container {
+    background: rgba(255,255,255,0.95); border-radius: 20px;
+    padding: 3rem; max-width: 450px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .login-header { text-align:center; margin-bottom:2rem; }
+  .login-header h2 { color:#667eea; font-size:2rem; font-weight:700; margin-bottom:0.4rem; }
+  .login-header p  { color:#666; }
+  .form-group      { margin-bottom:1.4rem; }
+  .form-label      { display:block; color:#333; font-weight:600; margin-bottom:0.4rem; }
+  .form-control {
+    width:100%; padding:0.8rem 1rem; border:2px solid #e0e0e0;
+    border-radius:10px; font-size:1rem; transition:all 0.3s; box-sizing:border-box;
+  }
+  .form-control:focus { outline:none; border-color:#667eea; box-shadow:0 0 0 3px rgba(102,126,234,0.1); }
+  .password-wrapper  { position:relative; }
+  .password-toggle {
+    position:absolute; right:1rem; top:50%; transform:translateY(-50%);
+    background:none; border:none; color:#666; cursor:pointer; font-size:1.1rem;
+  }
+  .btn-login {
+    width:100%; padding:1rem;
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+    color:#fff; border:none; border-radius:50px; font-size:1.05rem;
+    font-weight:600; cursor:pointer; transition:transform 0.2s; margin-top:0.5rem;
+  }
+  .btn-login:hover    { transform:translateY(-2px); box-shadow:0 5px 20px rgba(102,126,234,0.4); }
+  .btn-login:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+  .alert { padding:0.85rem 1rem; border-radius:10px; margin-bottom:1rem; display:none; font-size:0.9rem; }
+  .alert.show    { display:block; }
+  .alert-danger  { background:#fee; color:#c33; border:1px solid #fcc; }
+  .alert-success { background:#efe; color:#383; border:1px solid #cfc; }
+  .register-link { text-align:center; margin-top:1.4rem; color:#666; font-size:0.9rem; }
+  .register-link a { color:#667eea; text-decoration:none; font-weight:600; }
+  .spinner {
+    display:inline-block; width:16px; height:16px;
+    border:2px solid rgba(255,255,255,0.4); border-top-color:#fff;
+    border-radius:50%; animation:spin 0.8s linear infinite;
+    vertical-align:middle; margin-right:6px;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .loading-text { display:none; }
+  .btn-login.loading .normal-text  { display:none; }
+  .btn-login.loading .loading-text { display:inline; }
+</style>
+
+<div class="login-container">
+  <div class="login-header">
+    <h2>🎓 Login to Learnora</h2>
+    <p>Enter your credentials to continue</p>
+  </div>
+  <div id="alertError"   class="alert alert-danger" ><span id="errorText"></span></div>
+  <div id="alertSuccess" class="alert alert-success"><span id="successText"></span></div>
+  <form id="loginForm">
+    <div class="form-group">
+      <label class="form-label">Username or Email</label>
+      <input type="text" id="username" class="form-control"
+             placeholder="Enter your username or email" required autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="password-wrapper">
+        <input type="password" id="password" class="form-control"
+               placeholder="Enter your password" required autocomplete="current-password">
+        <button type="button" class="password-toggle" id="togglePassword">
+          <i class="bi bi-eye"></i>
+        </button>
+      </div>
+    </div>
+    <button type="submit" class="btn-login" id="loginBtn">
+      <span class="normal-text">Login</span>
+      <span class="loading-text"><span class="spinner"></span> Logging in...</span>
+    </button>
+  </form>
+  <div class="register-link">
+    Don't have an account? <a href="/register/">Register here</a>
+  </div>
+</div>
+
+<script>
+// ── Validate token with backend before redirecting ──────────────
+// FIX: don't blindly redirect just because a token exists in localStorage.
+// Verify it is still valid first. If expired/invalid → clear and stay on login.
+async function checkTokenAndRedirect() {
+  var token = localStorage.getItem('access_token');
+  if (!token) return; // no token → stay on login page normally
+
+  try {
+    var res = await fetch('/api/auth/profile/', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    if (res.ok) {
+      // Token is genuinely valid → redirect
+      window.location.href = '/select-topic/';
+    } else if (res.status === 401) {
+      // Token expired → try refresh
+      var refresh = localStorage.getItem('refresh_token');
+      if (refresh) {
+        var r2 = await fetch('/api/auth/token/refresh/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh: refresh })
+        });
+        if (r2.ok) {
+          var d = await r2.json();
+          localStorage.setItem('access_token', d.access);
+          window.location.href = '/select-topic/';
+          return;
+        }
+      }
+      // Refresh also failed → clear everything and stay on login
+      localStorage.clear();
+    }
+  } catch (err) {
+    // Network error → just stay on login, don't block the page
+    console.warn('Token check failed (network?):', err);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', async function () {
+  await checkTokenAndRedirect();
+
+  // Show "registered successfully" toast if redirected from register
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('registered') === '1') {
+    showSuccess('Account created successfully! Please log in.');
+  }
+});
+
+// Password toggle
+document.getElementById('togglePassword').addEventListener('click', function () {
+  var inp = document.getElementById('password');
+  var icon = this.querySelector('i');
+  if (inp.type === 'password') { inp.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+  else                         { inp.type = 'password'; icon.className = 'bi bi-eye'; }
+});
+
+// Login submit
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  hideMessages();
+
+  var username = document.getElementById('username').value.trim();
+  var password = document.getElementById('password').value;
+
+  if (!username) { showError('Please enter your username or email.'); return; }
+  if (!password) { showError('Please enter your password.'); return; }
+
+  var btn = document.getElementById('loginBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    var res  = await fetch('/api/auth/login/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: username, password: password })
+    });
+    var data = await res.json();
+    console.log('Login response:', data);
+
+    if (res.ok && data.tokens) {
+      localStorage.setItem('access_token',  data.tokens.access);
+      localStorage.setItem('refresh_token', data.tokens.refresh);
+      localStorage.setItem('user_data',     JSON.stringify(data.user));
+      localStorage.setItem('username',      data.user.username);
+      showSuccess('Login successful! Redirecting...');
+      setTimeout(function () { window.location.href = '/select-topic/'; }, 800);
+    } else {
+      showError(data.error || data.detail || data.message || 'Invalid credentials.');
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    }
+  } catch (err) {
+    console.error(err);
+    showError('Connection failed. Make sure Django is running on http://127.0.0.1:8000');
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+});
+
+function showError(msg) {
+  document.getElementById('errorText').textContent = msg;
+  document.getElementById('alertError').classList.add('show');
+  document.getElementById('alertSuccess').classList.remove('show');
+  setTimeout(function () { document.getElementById('alertError').classList.remove('show'); }, 6000);
+}
+function showSuccess(msg) {
+  document.getElementById('successText').textContent = msg;
+  document.getElementById('alertSuccess').classList.add('show');
+  document.getElementById('alertError').classList.remove('show');
+}
+function hideMessages() {
+  document.getElementById('alertError').classList.remove('show');
+  document.getElementById('alertSuccess').classList.remove('show');
+}
+</script>
+{% endblock %}

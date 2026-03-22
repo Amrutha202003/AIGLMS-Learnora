@@ -1,0 +1,41 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.sqlite3
+db.sqlite3
+
+# Django
+staticfiles/
+media/
+
+# Unity
+*.meta
+Library/
+Temp/
+Obj/
+Build/
+Logs/
+UserSettings/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+ExportedObj/
+.consulo/
+*.csproj
+*.pidb.meta
+
+# IDE
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
