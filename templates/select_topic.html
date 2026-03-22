@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         try {
-            var res = await fetch('/api/academics/subjects/', {
+            var res = await fetch('https://aiglms-learnora-production.up.railway.app/api/', {
                 headers: { 'Authorization': 'Bearer ' + token }
             });
 
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     return;
                 }
                 token = localStorage.getItem('access_token');
-                res = await fetch('/api/academics/subjects/', {
+                res = await fetch('https://aiglms-learnora-production.up.railway.app/api/', {
                     headers: { 'Authorization': 'Bearer ' + token }
                 });
             }
@@ -376,8 +376,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         var token = localStorage.getItem('access_token');
 
         try {
-            var res = await fetch(
-                '/api/academics/subjects/' + subjectId + '/topics/', {
+            var res = await fetch('https://aiglms-learnora-production.up.railway.app/api/' + subjectId + '/topics/', {
                 headers: { 'Authorization': 'Bearer ' + token }
             });
 
@@ -389,8 +388,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     return;
                 }
                 token = localStorage.getItem('access_token');
-                res = await fetch(
-                    '/api/academics/subjects/' + subjectId + '/topics/', {
+                res = await fetch('https://aiglms-learnora-production.up.railway.app/api/' + subjectId + '/topics/', {
                     headers: { 'Authorization': 'Bearer ' + token }
                 });
             }
@@ -502,7 +500,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         try {
             var token = localStorage.getItem('access_token');
-            var res = await fetch('/api/game/start-session/', {
+            var res = await fetch('https://aiglms-learnora-production.up.railway.app/api/', {
                 method: 'POST',
                 headers: {
                     'Content-Type':  'application/json',
@@ -523,7 +521,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     return;
                 }
                 token = localStorage.getItem('access_token');
-                res = await fetch('/api/game/start-session/', {
+                res = await fetch('https://aiglms-learnora-production.up.railway.app/api/', {
                     method: 'POST',
                     headers: {
                         'Content-Type':  'application/json',
@@ -580,7 +578,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         try {
-            var res = await fetch('/api/auth/token/refresh/', {
+            var res = await fetch('https://aiglms-learnora-production.up.railway.app/api/', {
                 method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body:    JSON.stringify({ refresh: refresh })

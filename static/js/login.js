@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loginBtn.textContent = 'Logging in...';
 
         try {
-            var res = await fetch('/api/auth/login/', {
+            var res = await fetch('https://aiglms-learnora-production.up.railway.app/api/auth/login/', {
                 method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

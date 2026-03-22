@@ -45,7 +45,7 @@ async function refreshToken() {
     }
 
     try {
-        var res = await fetch('/api/auth/token/refresh/', {
+        var res = await fetch('https://aiglms-learnora-production.up.railway.app/api/auth/token/refresh/', {
             method:  'POST',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify({ refresh: refresh })

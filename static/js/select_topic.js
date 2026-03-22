@@ -1,4 +1,4 @@
-const API_BASE = '';
+const API_BASE = 'https://aiglms-learnora-production.up.railway.app';
 
 // Get token from localStorage
 const token = localStorage.getItem('access_token');
@@ -126,9 +126,8 @@ async function loadTopics(subjectId, subjectName) {
         '<div class="loading-inline">Loading topics...</div>';
 
     try {
-        const res = await fetch(
-            `${API_BASE}/api/academics/subjects/` +
-            `${subjectId}/topics/`, {
+        const res = await  fetch(
+          `${API_BASE}/api/academics/subjects/${subjectId}/topics/`, {
             headers: { 'Authorization': 'Bearer ' + token }
         });
 
@@ -233,8 +232,7 @@ async function startGame() {
 
     try {
         // Create game session
-        const res = await fetch(
-            `${API_BASE}/api/game/start-session/`, {
+        const res = await  fetch(`${API_BASE}/api/game/start-session/`, {
             method:  'POST',
             headers: {
                 'Content-Type':  'application/json',

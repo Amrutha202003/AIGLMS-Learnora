@@ -296,13 +296,13 @@ async function loadProgress(token) {
     try {
         // Refresh token if needed
         var refreshed = false;
-        var scoresRes = await fetch('/api/game/scores/', {
+        var scoresRes = await fetch('https://aiglms-learnora-production.up.railway.app/api/', {
             headers: { 'Authorization': 'Bearer ' + token }
         });
 
         if (scoresRes.status === 401) {
             var refresh = localStorage.getItem('refresh_token');
-            var refreshRes = await fetch('/api/auth/token/refresh/', {
+            var refreshRes = await fetch('https://aiglms-learnora-production.up.railway.app/api/', {
                 method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body:    JSON.stringify({ refresh: refresh })
@@ -311,7 +311,7 @@ async function loadProgress(token) {
             if (refreshData.access) {
                 localStorage.setItem('access_token', refreshData.access);
                 token = refreshData.access;
-                scoresRes = await fetch('/api/game/scores/', {
+                scoresRes = await fetch('https://aiglms-learnora-production.up.railway.app/api/', {
                     headers: { 'Authorization': 'Bearer ' + token }
                 });
             }
@@ -343,7 +343,7 @@ async function loadProgress(token) {
         }
 
         // Load progress
-        var progressRes = await fetch('/api/game/progress/', {
+        var progressRes = await fetch('https://aiglms-learnora-production.up.railway.app/api/', {
             headers: { 'Authorization': 'Bearer ' + token }
         });
 

@@ -96,7 +96,7 @@ async function checkTokenAndRedirect() {
   if (!token) return; // no token → stay on login page normally
 
   try {
-    var res = await fetch('/api/auth/profile/', {
+    var res = await fetch('https://aiglms-learnora-production.up.railway.app/api/auth/profile/', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
 
@@ -107,7 +107,7 @@ async function checkTokenAndRedirect() {
       // Token expired → try refresh
       var refresh = localStorage.getItem('refresh_token');
       if (refresh) {
-        var r2 = await fetch('/api/auth/token/refresh/', {
+        var r2 = await fetch('https://aiglms-learnora-production.up.railway.app/api/auth/token/refresh/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refresh: refresh })
@@ -162,7 +162,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
   btn.disabled = true;
 
   try {
-    var res  = await fetch('/api/auth/login/', {
+    var res  = await fetch('https://aiglms-learnora-production.up.railway.app/api/auth/login/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: username, password: password })
@@ -184,7 +184,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     }
   } catch (err) {
     console.error(err);
-    showError('Connection failed. Make sure Django is running on http://127.0.0.1:8000');
+    showError('Connection failed. Make sure Django is running on https://aiglms-learnora-production.up.railway.app/');
     btn.classList.remove('loading');
     btn.disabled = false;
   }
