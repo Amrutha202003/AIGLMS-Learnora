@@ -14,12 +14,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Add your specific Railway domain here without 'https://'
-ALLOWED_HOSTS = [
-    'aiglms-learnora-production.up.railway.app',
-    'localhost',
-    '127.0.0.1',
-    '*', # Allow all for initial debugging, but remove '*' later for security
-]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
