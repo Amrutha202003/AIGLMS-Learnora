@@ -1,1 +1,1 @@
-web: gunicorn your_project_name.wsgi --bind 0.0.0.0:$PORTweb: python manage.py migrate && gunicorn your_project_name.wsgi --bind 0.0.0.0:$PORT
+web: gunicorn your_project_name.wsgi --bind 0.0.0.0:$PORTweb: python manage.py migrate && gunicorn your_project_name.wsgi --bind 0.0.0.0:$PORTweb: python manage.py migrate && gunicorn your_folder_name.wsgi --bind 0.0.0.0:$PORT
