@@ -1,4 +1,3 @@
-import anthropic
 import os
 import json
 from django.db.models import Avg, Count, Sum
