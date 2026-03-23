@@ -148,3 +148,9 @@ SIMPLE_JWT = {
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', '')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# ── Force these OFF explicitly for Railway ────────────────────────
+CSRF_COOKIE_SECURE    = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY  = False
+CSRF_COOKIE_SAMESITE  = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
