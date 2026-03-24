@@ -45,7 +45,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'config.csrf_exempt_admin.DisableCSRFOnAdmin',  # ← replaces CsrfViewMiddleware
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -149,8 +149,16 @@ GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', '')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ── Force these OFF explicitly for Railway ────────────────────────
-CSRF_COOKIE_SECURE    = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY  = False
-CSRF_COOKIE_SAMESITE  = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
+# ── Force CSRF cookies OFF for Railway ────────────────────────────
+CSRF_COOKIE_SECURE      = False
+SESSION_COOKIE_SECURE   = False
+CSRF_COOKIE_SAMESITE    = None
+SESSION_COOKIE_SAMESITE = None
+CSRF_COOKIE_HTTPONLY    = False
+CSRF_USE_SESSIONS       = False
+CSRF_TRUSTED_ORIGINS = [
+    'https://aiglms-learnora-production.up.railway.app',
+    'https://*.railway.app',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
