@@ -158,6 +158,7 @@ CSRF_COOKIE_HTTPONLY    = False
 CSRF_USE_SESSIONS       = False
 CSRF_TRUSTED_ORIGINS = [
     'https://aiglms-learnora-production.up.railway.app',
+    'https://*.up.railway.app',
     'https://*.railway.app',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
